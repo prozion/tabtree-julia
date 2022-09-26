@@ -60,15 +60,15 @@ function get_item(line)
 end
 
 function fill_tree_iter(source_lines; global_inherities = Dict(), result = Dict())
-    root_line = first(source_lines)
+    root_line = isempty(source_lines) ? "" : first(source_lines)
     next_lines = rest(source_lines)
     root_tabs_count = count_tabs(root_line)
     root_item = get_item(root_line)
-    root_id = root_item[:__id]
+    root_id = get(root_item, :__id, "")
     root_item = is_anon_node_id(root_id) ?
                     item_plus(root_item, Dict(:__anon => true)) :
                     root_item
-    old_root_item = get(result, root_id, "")
+    old_root_item = get(result, root_id, Dict())
     local_inherities = get_inherities(root_item)
     all_inherities = merge(global_inherities, local_inherities)
     root_item = item_minus(root_item, keys(local_inherities))
@@ -90,7 +90,7 @@ function fill_tree_iter(source_lines; global_inherities = Dict(), result = Dict(
                         end for (k, v) in root_item)
     root_item = merge(
                     mergewith(merge_item_vals, old_root_item, root_item),
-                    Dict(:__id, root_id))
+                    Dict(:__id => root_id))
     result = isempty(sublines) ?
                 mergewith(merge, result, Dict(root_id => root_item)) :
                 global Parent_id = root_id

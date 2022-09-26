@@ -41,11 +41,46 @@ is_inherity(key, value) = typeof(key) == String && ismatch(r"\+[\-a-z0-9|]+", ke
 
 get_inherities(item) = filter(is_inherity, item)
 
+function item_plus(item, new_parameters)
+    merge(item, new_parameters)
+end
+
 function item_minus(item, keys_to_remove)
     item_keys = collect(keys(item))
     if isempty(item_keys)
         item
     else
         Dict(k => item[k] for k in setdiff(item_keys, keys_to_remove))
+    end
+end
+
+function deplus(s)
+    deplused_name = lstrip(s, '+')
+    isempty(Namespace) ?
+        deplused_name :
+        "$Namespace/$deplused_name"
+end
+
+incorporate_inherities(inherities) = Dict(deplus(k) => v for (k, v) in inherities)
+
+is_rdf_list(v) = isa(v, Dict) && haskey(v, :__rdf_list)
+
+function merge_item_vals(v1, v2)
+    if all(rdf_list, [v1, v2])
+        merge(v1, Dict(:__values => [v1[:__values]; v2[:__values]]))
+    elseif is_dict(v1) && isa(v2, Dict)
+        merge(v1, v2)
+    elseif (is_dict(v1) && is_scalar(v2)) || (is_scalar(v1) && is_dict(v2))
+        unique([v1; v2])
+    elseif is_coll(v1) && is_coll(v2)
+        unique([v1; v2])
+    elseif is_scalar(v1) && is_coll(v2)
+        unique(pushr(v2, v1))
+    elseif is_coll(v1) && is_scalar(v2)
+        unique(pushr(v1, v2))
+    elseif is_scalar(v1) && is_scalar(v2)
+        [v1, v2]
+    else
+        v2
     end
 end

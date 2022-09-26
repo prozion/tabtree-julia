@@ -1,6 +1,13 @@
 include("debug.jl")
 
+### base
+Base.first(coll) = isempty(coll) ? coll : coll[1]
+
 ###  collections
+
+is_scalar(sc) = any(x -> isa(sc, x), [Number, Symbol, String, Char])
+is_coll(coll) = isa(coll, Vector) || isa(coll, Tuple)
+is_dict(d) = isa(d, Dict)
 
 remove(f, coll) = filter(x -> !f(x), coll)
 # println(remove(x -> x == 5, [1,2,5,5,4,5,7]))
