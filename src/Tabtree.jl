@@ -1,11 +1,8 @@
 module Tabtree
 
-import("parse_tabtree.jl")
+include("parse_tabtree.jl")
+include("parse_tabtree_utils.jl")
 
 export get_subtree, parse_tabtree
-
-function get_subtree(tabtree, keys)
-    (:a => "foo", :b => "bar")
-end
 
 end

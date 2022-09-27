@@ -28,7 +28,7 @@ split_with(f, coll, left = []) = begin
     if isempty(coll)
         (left, coll)
     elseif f(first(coll))
-        split_with(rest(coll), f, pushr(left, first(coll)))
+        split_with(f, rest(coll), pushr(left, first(coll)))
     else
         (left, coll)
     end
@@ -84,8 +84,10 @@ re_seq(re, str) = begin
     ms = collect(eachmatch(re, str))
     map(m -> if length(m) == 0
                 String(m.match)
-             else
-                [String(m.match); map(String, m.captures)]
+            elseif isempty(m.captures)
+                String(m.match)
+            else
+                [String(m.match); map(String, remove(isnothing, m.captures))]
             end,
         ms)
 end

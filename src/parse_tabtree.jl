@@ -8,11 +8,16 @@ using Pipe
 Namespace = ""
 Parent_id = ""
 
-function get_item(line)
+function get_id(line)
     _, id = re_find(r"^\t*([\"λ#*A-Za-zА-ЯЁа-яёα-ω0-9&@:.\-_+/|<>\\?!]+)", line)
     line = replace(line, r"\^\S+" => "")
-    id = namespaced_key(id)
     id = rename_anon_node(Parent_id, id)
+    id = namespaced_key(id)
+    return id
+end
+
+function get_item(line)
+    id = get_id(line)
     value_pattern(re_value) = begin
         re_key = "[_a-zA-ZА-ЯЁа-яёα-ω0-9/\\-|+]+"
         Regex("(?<=\\s)($re_key):($re_value(?=(\\s|\$|^)))")
@@ -28,8 +33,8 @@ function get_item(line)
                                     replace(_, "[`]" => "") |>
                                     split(_, ",") |>
                                     map(namespaced_key, _)))
-    string_parameters1 = collect_pars(value_pattern("[\"][^\"]*?[\"]"), line, x -> replace(x, r"[\"]", ""))
-    string_parameters2 = collect_pars(value_pattern("['][^']*?[']"), line, x -> replace(x, r"[']", ""))
+    string_parameters1 = collect_pars(value_pattern("[\"][^\"]*?[\"]"), line, x -> replace(x, r"[\"]" => ""))
+    string_parameters2 = collect_pars(value_pattern("['][^']*?[']"), line, x -> replace(x, r"[']" => ""))
     string_parameters = merge(string_parameters1, string_parameters2)
     integer_parameters = collect_pars(value_pattern("[-+0-9][0-9]{0,8}"), line, x -> parse(Int, x))
     date_parameters = collect_pars(value_pattern("[0-9x][0-9x]\\.[01x][0-9x]\\.[0-9x]{3,4}"), line)
@@ -39,7 +44,7 @@ function get_item(line)
     multiple_ref_parameters = collect_pars(value_pattern("[^\"`][a-zA-ZА-ЯЁа-яёα-ω0-9_\\-/]*,[a-zA-ZА-ЯЁа-яёα-ω0-9_,-/]+"), line, x -> map(namespaced_key, split(x, ",")))
     multiple_integer_parameters = collect_pars(value_pattern("[-+0-9]{1,9},[-+0-9,]+"), line, x -> map(y -> parse(Int, y), split(x, ",")))
     multiple_url_parameters = collect_pars(value_pattern("http[^, ]+,.+(?=[\\s])"), line, x -> split(x, ","))
-    multiple_string_parameters = collect_pars(value_pattern("[\"`][^\"`]*?[\"`],.+?[\"`]"), line, x -> map(chunk -> replace(chunk, r"(\")|`|(\\)", ""), split(x, r"(?>[\"`]),")))
+    multiple_string_parameters = collect_pars(value_pattern("[\"`][^\"`]*?[\"`],.+?[\"`]"), line, x -> map(chunk -> replace(chunk, r"(\")|`|(\\)" => ""), split(x, r"(?>[\"`]),")))
     parameters = merge(
                     all_parameters,
                     rdf_list_parameters,
@@ -76,8 +81,8 @@ function fill_tree_iter(source_lines; global_inherities = Dict(), result = Dict(
                                     line -> count_tabs(line) > root_tabs_count,
                                     next_lines)
     top_sublines = filter(line -> count_tabs(line) == root_tabs_count + 1, sublines)
-    children_ids = map(subline -> keyword_to_ns(id(get_item(subline))), top_sublines)
-    root_item = isempty(children_ids) ? root_item : item_plus(root_item, children_ids[:__children])
+    children_ids = map(subline -> get_id(subline), top_sublines)
+    root_item = isempty(children_ids) ? root_item : item_plus(root_item, Dict(:__children => children_ids))
     root_item = item_plus(incorporate_inherities(global_inherities), root_item)
     root_item = Dict(k =>
                         if is_rdf_list(v)
@@ -93,12 +98,14 @@ function fill_tree_iter(source_lines; global_inherities = Dict(), result = Dict(
                     Dict(:__id => root_id))
     result = isempty(sublines) ?
                 mergewith(merge, result, Dict(root_id => root_item)) :
-                global Parent_id = root_id
-                mergewith(
-                    merge,
-                    result,
-                    Dict(root_id => root_item),
-                    fill_tree_iter(sublines, global_inherities = all_inherities))
+                begin
+                    global Parent_id = root_id
+                    mergewith(
+                        merge,
+                        result,
+                        Dict(root_id => root_item),
+                        fill_tree_iter(sublines, global_inherities = all_inherities))
+                end
     isempty(next_block_lines) ?
         result :
         fill_tree_iter(next_block_lines, global_inherities = all_inherities, result = result)
@@ -118,4 +125,4 @@ end
 
 # run(`pwd`)
 
-parse_tabtree("../data/fixtures/countries.tree")
+# @p parse_tabtree("../data/fixtures/countries.tree")

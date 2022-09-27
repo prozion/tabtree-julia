@@ -7,29 +7,19 @@ end
 
 function count_tabs(line; count = 0)
     line_chars = split(line, "")
-    if first(line) == "\t"
+    if first(line) == '\t'
         count_tabs(rest(line), count = count + 1)
     else
         count
     end
 end
 
-# (defn collect-pars
-#   ([re line]
-#     (collect-pars re line identity))
-#   ([re line f]
-#     (reduce
-#       (fn [acc chunk]
-#         (let [[_ key value] chunk]
-#           (assoc acc (->keyword-ns key) (f value))))
-#       {}
-#       (re-seq re line))))
-
 collect_pars(re, line, f = identity) = Dict(namespaced_key(k) => f(v) for (_, k, v) in re_seq(re, line))
 
 exists(id) = !isempty(id)
 
-is_anon_node_id(id) = !isempty(re_seq(r"(?<=\b)_[1-9]?(?=\b)", id))
+is_anon_node_id(id::String) = !isempty(re_seq(r"(?<=\b)_[1-9]?(?=\b)", id))
+is_anon_node_id(id) = false
 
 function rename_anon_node(parent_id, child_id)
     (exists(parent_id) && is_anon_node_id(child_id)) ?
@@ -82,5 +72,30 @@ function merge_item_vals(v1, v2)
         [v1, v2]
     else
         v2
+    end
+end
+
+is_tabtree(tabtree) = all(x -> isa(x, Dict), values(tabtree))
+
+function get_subtree(tabtree, path)
+    function add_children_ids(next_children, checked_children = [])
+        if isempty(next_children)
+            checked_children
+        else
+            next_child = first(next_children)
+            checked_children = [checked_children; next_child]
+            new_children = get(
+                            get(tabtree, next_child, Dict()),
+                            :__children,
+                            [])
+            new_next_children = unique([rest(next_children); setdiff(new_children, checked_children)])
+            add_children_ids(new_next_children, checked_children)
+        end
+    end
+    if is_tabtree(tabtree)
+        next_children = isempty(path) ? [] : path[end:end]
+        children_ids = add_children_ids(next_children)
+    else
+        Dict()
     end
 end
