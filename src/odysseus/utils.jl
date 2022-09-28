@@ -9,6 +9,7 @@ is_scalar(sc) = any(x -> isa(sc, x), [Number, Symbol, String, Char])
 is_coll(coll) = isa(coll, Vector) || isa(coll, Tuple)
 is_dict(d) = isa(d, Dict)
 
+remove(f, coll::Dict{K, V}) where {K <: Any, V <: Any}  = filter((k, v) -> !f(k, v), coll)
 remove(f, coll) = filter(x -> !f(x), coll)
 # println(remove(x -> x == 5, [1,2,5,5,4,5,7]))
 

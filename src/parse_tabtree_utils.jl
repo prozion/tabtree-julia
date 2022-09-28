@@ -92,10 +92,28 @@ function get_subtree(tabtree, path)
             add_children_ids(new_next_children, checked_children)
         end
     end
+    path = split(path, ".")
     if is_tabtree(tabtree)
         next_children = isempty(path) ? [] : path[end:end]
         children_ids = add_children_ids(next_children)
+        Dict(k => tabtree[k] for k in children_ids)
     else
         Dict()
     end
+end
+
+function get_parameter(path, tabtree)
+    path_as_list = split(path, ".")
+    node_id, parameter_key = last(path_as_list, 2)
+    node = get(tabtree, node_id, Dict())
+    get(node, parameter_key, "")
+end
+
+function tt(path, tabtree)
+    path_as_list = split(path, ".")
+    last_point = last(path_as_list)
+    haskey(tabtree, last_point) ?
+        # remove((k, v) -> k == last_point, get_subtree(tabtree, path)) :
+        get(tabtree[last_point], :__children, []) :
+        get_parameter(path, tabtree)
 end
