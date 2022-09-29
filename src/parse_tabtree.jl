@@ -18,12 +18,13 @@ end
 
 function get_item(line)
     id = get_id(line)
+    line = replace(line, r"\^\S+" => "") # remove meta information
     value_pattern(re_value) = begin
         re_key = "[_a-zA-ZА-ЯЁа-яёα-ω0-9/\\-|+]+"
         Regex("(?<=\\s)($re_key):($re_value(?=(\\s|\$|^)))")
     end
     all_parameters = collect_pars(value_pattern("(\\S+)"), line)
-    ref_parameters = collect_pars(value_pattern("[a-zA-ZА-ЯЁа-яёα-ω0-9_\\-/]+"), line)
+    ref_parameters = collect_pars(value_pattern("[a-zA-ZА-ЯЁа-яёα-ω0-9_\\-/]+"), line, x -> namespaced_key(x))
     rdf_list_parameters = collect_pars(
                             value_pattern("[`][^`]*?[`]"),
                             line,
@@ -40,7 +41,7 @@ function get_item(line)
     date_parameters = collect_pars(value_pattern("[0-9x][0-9x]\\.[01x][0-9x]\\.[0-9x]{3,4}"), line)
     url_parameters = collect_pars(value_pattern("http.*?(?=[\\s])"), line)
     year_parameters = collect_pars(value_pattern("([<>])?[1-9]{1,2}(h[12]|q[1234]|xx|[0-9]x)"), line)
-    multiple_parameters = collect_pars(value_pattern("[^\"`]\\S*,[\\S,]+"), line, x -> map(namespaced_key, split(x, ",")))
+    multiple_parameters = collect_pars(value_pattern("[^\"`]\\S*,[\\S,]+"), line, x -> split(x, ","))
     multiple_ref_parameters = collect_pars(value_pattern("[^\"`][a-zA-ZА-ЯЁа-яёα-ω0-9_\\-/]*,[a-zA-ZА-ЯЁа-яёα-ω0-9_,-/]+"), line, x -> map(namespaced_key, split(x, ",")))
     multiple_integer_parameters = collect_pars(value_pattern("[-+0-9]{1,9},[-+0-9,]+"), line, x -> map(y -> parse(Int, y), split(x, ",")))
     multiple_url_parameters = collect_pars(value_pattern("http[^, ]+,.+(?=[\\s])"), line, x -> split(x, ","))
@@ -61,7 +62,7 @@ function get_item(line)
                     multiple_url_parameters)
     isempty(id) ?
         parameters :
-        merge(parameters, Dict(:__id => namespaced_key(id)))
+        merge(parameters, Dict(:__id => id))
 end
 
 function fill_tree_iter(source_lines; global_inherities = Dict(), result = Dict())
@@ -93,9 +94,11 @@ function fill_tree_iter(source_lines; global_inherities = Dict(), result = Dict(
                         else
                             rename_anon_node(root_id, v)
                         end for (k, v) in root_item)
+    global Parent_id
+    old_parent_id = Parent_id
     root_item = merge(
                     mergewith(merge_item_vals, old_root_item, root_item),
-                    Dict(:__id => root_id))
+                    Dict(:__id => root_id, :__parent => Parent_id))
     result = isempty(sublines) ?
                 mergewith(merge, result, Dict(root_id => root_item)) :
                 begin
@@ -106,6 +109,7 @@ function fill_tree_iter(source_lines; global_inherities = Dict(), result = Dict(
                         Dict(root_id => root_item),
                         fill_tree_iter(sublines, global_inherities = all_inherities))
                 end
+    Parent_id = old_parent_id
     isempty(next_block_lines) ?
         result :
         fill_tree_iter(next_block_lines, global_inherities = all_inherities, result = result)
@@ -120,6 +124,7 @@ function parse_tabtree(treefile; namespace="")
                                 end,
                         tree_lines)
     tabtree = fill_tree_iter(tree_lines)
+    tabtree = Dict(k => add_hierarchy_relations(v) for (k, v) in tabtree)
     # println(tree_lines)
 end
 

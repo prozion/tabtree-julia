@@ -11,10 +11,12 @@ section1
 	Абрикосовая +hierarchy-inverse-relation:street
 		Абрикосовая_5
 		Кравцова_4
-		Абрикосовая_10
+		Абрикосовая_10 z:3
 		Абрикосовая_12
 	Виноградная +hierarchy-inverse-relation:street
 		Виноградная_1
+			Виноградная_1а
+			Виноградная_2а
 		Корчма
 	Тенистая +hierarchy-inverse-relation:street
 		Место_для_Юрия_Антонова

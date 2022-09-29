@@ -2,8 +2,16 @@ include("odysseus/utils.jl")
 
 namespaced_key(k) = begin
     global Namespace
-    isempty(Namespace) ? k : "$current_namespace/$k"
+    if isempty(Namespace)
+        k
+    elseif ismatch("/", k)
+        k
+    else
+        "$Namespace/$k"
+    end
 end
+
+strip_namespace(k) = last(split(k, "/"))
 
 function count_tabs(line; count = 0)
     line_chars = split(line, "")
@@ -15,8 +23,6 @@ function count_tabs(line; count = 0)
 end
 
 collect_pars(re, line, f = identity) = Dict(namespaced_key(k) => f(v) for (_, k, v) in re_seq(re, line))
-
-exists(id) = !isempty(id)
 
 is_anon_node_id(id::String) = !isempty(re_seq(r"(?<=\b)_[1-9]?(?=\b)", id))
 is_anon_node_id(id) = false
@@ -48,7 +54,7 @@ function deplus(s)
     deplused_name = lstrip(s, '+')
     isempty(Namespace) ?
         deplused_name :
-        "$Namespace/$deplused_name"
+        namespaced_key(deplused_name)
 end
 
 incorporate_inherities(inherities) = Dict(deplus(k) => v for (k, v) in inherities)
@@ -104,16 +110,57 @@ end
 
 function get_parameter(path, tabtree)
     path_as_list = split(path, ".")
-    node_id, parameter_key = last(path_as_list, 2)
+    node_id, parameter_key = map(namespaced_key, last(path_as_list, 2))
     node = get(tabtree, node_id, Dict())
     get(node, parameter_key, "")
 end
 
-function tt(path, tabtree)
+function tt(path, tabtree, namespace="")
+    global Namespace = namespace
     path_as_list = split(path, ".")
-    last_point = last(path_as_list)
-    haskey(tabtree, last_point) ?
-        # remove((k, v) -> k == last_point, get_subtree(tabtree, path)) :
-        get(tabtree[last_point], :__children, []) :
+    last_point = namespaced_key(last(path_as_list))
+    if haskey(tabtree, last_point)
+        get(tabtree[last_point], :__children, [])
+    elseif length(path_as_list) >= 2
         get_parameter(path, tabtree)
+    else
+        ""
+    end
+end
+
+inheritance_plus(k) = namespaced_key("+$k")
+
+get_item_parameter(k, id::String, tabtree) = get_item_parameter(l, get(tabtree, id, Dict()))
+get_item_parameter(k, node) = begin
+    inherited_key = inheritance_plus(k)
+    get(node, k,
+        get(node, inherited_key,
+            ""))
+end
+
+get_parent_id(node_id, tabtree) = get_parent_id(get(tabtree, node_id, Dict()))
+get_parent_id(node) = get(node, :__parent, "")
+
+function add_hierarchy_relations(m)
+    hierarchy_relation = get_item_parameter("hierarchy-relation", m)
+    hierarchy_inverse_relation = get_item_parameter("hierarchy-inverse-relation", m)
+    children = get(m, :__children, [])
+    if all(exists, [hierarchy_relation, children])
+        k = namespaced_key(hierarchy_relation)
+        old_v = get(m, k, "")
+        new_v = isempty(old_v) ? children : [children; old_v]
+        merge(m, Dict(k => new_v))
+    elseif exists(hierarchy_inverse_relation)
+        parent_id = get_parent_id(m)
+        if exists(parent_id)
+            k = namespaced_key(hierarchy_inverse_relation)
+            old_v = get(m, k, "")
+            new_v = isempty(old_v) ? parent_id : [parent_id; old_v]
+            merge(m, Dict(k => new_v))
+        else
+            m
+        end
+    else
+        m
+    end
 end

@@ -2,6 +2,7 @@ include("debug.jl")
 
 ### base
 Base.first(coll) = isempty(coll) ? coll : coll[1]
+exists(e) = !isempty(e)
 
 ###  collections
 

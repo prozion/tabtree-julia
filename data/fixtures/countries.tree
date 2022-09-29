@@ -16,7 +16,7 @@ countries
 		egypt a:Country +a:dbpedia/City
 			Alexandria start:BC-331
 		tunisia a:Country +a:dbpedia/City
-			Carthagen start:-814
+			Carthagen start:-814 new-name:Tunis
 	neverland +hierarchy-relation:includes a:Country +a:dbpedia/City
 		20-й_город_Ёлки gold:100500 wgid:6101196000
 	

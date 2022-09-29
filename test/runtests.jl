@@ -9,13 +9,21 @@ using Pipe
 
 # countries = (:a => "foo", :b => "bar")
 countries = Tabtree.parse_tabtree("../data/fixtures/countries.tree")
+countries_namespaced = Tabtree.parse_tabtree("../data/fixtures/countries.tree", namespace="test")
 foobars = Tabtree.parse_tabtree("../data/fixtures/foobar.tree")
-# println(countries)
+foobars_namespaced = Tabtree.parse_tabtree("../data/fixtures/foobar.tree", namespace="test")
+
+# Tabtree.tt("namespaces", foobars)
+# println(get(countries_namespaced, "test/Oslo", ""))
 
 # @p countries["Taganrog"]
 # Tabtree.get_subtree(countries, ("countries", "europe"))
 
 # @p Tabtree.tt("africa", countries)
+
+# @p foobars_namespaced["test/Абрикосовая_10"]
+#
+# exit(0)
 
 @testset "Tabtree" begin
     @testset "Check parse_tabtree" begin
@@ -43,7 +51,48 @@ foobars = Tabtree.parse_tabtree("../data/fixtures/foobar.tree")
         @test Tabtree.tt("foo.bar.string", foobars) == "Однажды, quux and foox decided to walk northwards"
     end
 
-    # @testset "Check string reading" begin
-    #     @test Tabtree.tt("foo.bar.string", foobars) == "Однажды, quux and foox decided to walk northwards"
-    # end
+    @testset "Check dates reading" begin
+        @test Tabtree.tt("countries.europe.norway.Stockholm.start", countries) == 1252
+        @test Tabtree.tt("countries.europe.norway.Taganrog.start", countries) == "16q4"
+        @test Tabtree.tt("countries.europe.norway.Oslo.start-lower", countries) == 1050
+        @test Tabtree.tt("personalities.Юрий_Антонов.bdate", foobars) == "19.02.1945"
+        @test Tabtree.tt("personalities.Снусмумрик.bdate", foobars) == "05.1925"
+    end
+
+    @testset "Check text reading" begin
+        @test Tabtree.tt("countries.europe.russia.Taganrog.Греческая_47.фото", countries) == ""
+    end
+
+    @testset "Check multiple parameters reading" begin
+        @test length(Tabtree.tt("foo.bar.index", foobars)) == 3
+        @test Tabtree.tt("foo.bar.index", foobars) == [1, 2, 3]
+        @test Tabtree.tt("foo.bar.refs", foobars) == ["a", "b20", "Глушко_29"]
+        @test Tabtree.tt("foo.bar.url", foobars) == ["vk.com/foo", "taganrog.su"]
+        @test Tabtree.tt("foo.bar.another-url", foobars) == ["http://vk.com/foo", "https://taganrog.su"]
+        @test Tabtree.tt("foo.bar.multiple-strings", foobars) == ["qux", "foo and bar", "foo,bar,quux", "foo, bar and quux"]
+    end
+
+    @testset "Check inherities" begin
+        @test Tabtree.tt("countries.europe.russia.Taganrog.feature", countries) == "RUNNING"
+        @test Tabtree.tt("foo.i", foobars) == ""
+        @test Tabtree.tt("foo.bar.i", foobars) == 100
+    end
+
+    @testset "Check namespaces" begin
+        @test Tabtree.tt("countries.europe.norway.Oslo.rdf/type", countries) == "dbpedia/City"
+        @test Tabtree.tt("countries.europe.norway.Oslo.rdf/type", countries_namespaced, "test") == "dbpedia/City"
+        @test Tabtree.tt("countries.europe.russia.Taganrog.it-companies", countries_namespaced, "test") == ["test/Arcadia","test/Oggetto", "test/Dunice", "test/LodossTeam"]
+        @test Tabtree.tt("namespaces.zendix.pars", foobars) == ["starwars/Luke_Skywalker", "startrack/Captain_Kirk", "Dar_Veter"]
+        @test Tabtree.tt("namespaces.zendix.pars", foobars_namespaced, "test") == ["starwars/Luke_Skywalker", "startrack/Captain_Kirk", "test/Dar_Veter"]
+    end
+
+    @testset "Check direct hierarchy" begin
+        @test "scipadoo" in foobars["quux"]["subfoo"]
+        @test Tabtree.tt("foo.quux.subfoo", foobars) == ["scipadoo", "_", "_1"]
+    end
+
+    @testset "Check inverse hierarchy" begin
+        @test Tabtree.tt("section1.Абрикосовая.Абрикосовая_10.street", foobars) == "Абрикосовая"
+        @test Tabtree.tt("section1.Абрикосовая.Абрикосовая_10.street", foobars_namespaced, "test") == "test/Абрикосовая"
+    end
 end
