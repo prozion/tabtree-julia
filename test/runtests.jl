@@ -3,27 +3,17 @@
 # using Tabtree
 include("../src/Tabtree.jl")
 include("../src/odysseus/debug.jl")
+include("../src/odysseus/io.jl")
 
 using Test
 using Pipe
+using OrderedCollections
 
 # countries = (:a => "foo", :b => "bar")
 countries = Tabtree.parse_tabtree("../data/fixtures/countries.tree")
 countries_namespaced = Tabtree.parse_tabtree("../data/fixtures/countries.tree", namespace="test")
 foobars = Tabtree.parse_tabtree("../data/fixtures/foobar.tree")
 foobars_namespaced = Tabtree.parse_tabtree("../data/fixtures/foobar.tree", namespace="test")
-
-# Tabtree.tt("namespaces", foobars)
-# println(get(countries_namespaced, "test/Oslo", ""))
-
-# @p countries["Taganrog"]
-# Tabtree.get_subtree(countries, ("countries", "europe"))
-
-# @p Tabtree.tt("africa", countries)
-
-# @p foobars_namespaced["test/Абрикосовая_10"]
-#
-# exit(0)
 
 @testset "Tabtree" begin
     @testset "Check parse_tabtree" begin
@@ -94,5 +84,15 @@ foobars_namespaced = Tabtree.parse_tabtree("../data/fixtures/foobar.tree", names
     @testset "Check inverse hierarchy" begin
         @test Tabtree.tt("section1.Абрикосовая.Абрикосовая_10.street", foobars) == "Абрикосовая"
         @test Tabtree.tt("section1.Абрикосовая.Абрикосовая_10.street", foobars_namespaced, "test") == "test/Абрикосовая"
+    end
+end
+
+@testset "CSV" begin
+    h2 = Tabtree.parse_tabtree("../data/fixtures/h2.tree")
+    content = Tabtree.make_csv(h2)
+    write_file("../data/generated/h2.csv", content)
+
+    @testset "Read CSV" begin
+        @test length(content) > 100
     end
 end

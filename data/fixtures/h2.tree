@@ -1,0 +1,74 @@
+h2_creatures url:https://mightandmagic.fandom.com/wiki/Heroes_II_creatures
+	; Barbarians
+	Goblin race:Barbarian level:1 a:3 def:1 hp:3 dmg-min:1 dmg-max:2 v:average growth:10 gold:40
+	Orc race:Barbarian level:2 a:3 def:4 hp:10 dmg-min:2 dmg-max:3 v:very_slow growth:8 gold:140 ammo:8
+	Orc_Chief race:Barbarian level:2 level:2 a:3 def:4 hp:15 dmg-min:3 dmg-max:4 v:slow growth:8 gold:175 ammo:16
+	Wolf race:Barbarian level:3 a:6 def:2 hp:20 dmg-min:3 dmg-max:5 v:very_fast growth:5 gold:200
+	Ogre race:Barbarian level:4 a:9 def:5 hp:40 dmg-min:4 dmg-max:6 v:very_slow growth:4 gold:300
+	Ogre_Lord race:Barbarian level:4 a:9 def:5 hp:60 dmg-min:5 dmg-max:7 v:average growth:4 gold:500
+	Troll race:Barbarian level:5 a:10 def:5 hp:40 dmg-min:5 dmg-max:7 v:average growth:8 gold:600 ammo:8
+	War_Troll race:Barbarian level:5 a:10 def:5 hp:40 dmg-min:7 dmg-max:9 v:fast growth:3 gold:700 ammo:16
+	Cyclops race:Barbarian level:6 a:12 def:9 hp:80 dmg-min:12 dmg-max:24 v:fast growth:2 gold:750 crystal:1
+	; Knights
+	Peasant race:Knight level:1 a:1 def:1 hp:1 dmg-min:1 dmg-max:1 v:very_slow growth:12 gold:20
+	Archer race:Knight level:2 a:5 def:3 hp:10 dmg-min:2 dmg-max:3 v:very_slow growth:8 gold:150 ammo:12
+	Ranger race:Knight level:2 a:5 def:3 hp:10 dmg-min:2 dmg-max:3 v:average growth:8 gold:200 ammo:24
+	Pikeman race:Knight level:3 a:5 def:9 hp:15 dmg-min:3 dmg-max:4 v:average growth:5 gold:200
+	Veteran_Pikeman race:Knight level:3 a:5 def:9 hp:20 dmg-min:3 dmg-max:4 v:fast growth:5 gold:250
+	Swordsman race:Knight level:4 a:7 def:9 hp:25 dmg-min:4 dmg-max:6 v:average growth:4 gold:250
+	Master_Swordsman race:Knight level:4 a:7 def:9 hp:30 dmg-min:4 dmg-max:6 v:fast growth:4 gold:300
+	Cavalry race:Knight level:5 a:10 def:9 hp:30 dmg-min:5 dmg-max:10 v:very_fast growth:3 gold:300
+	Champion race:Knight level:5 a:10 def:9 hp:40 dmg-min:5 dmg-max:10 v:ultra_fast growth:3 gold:375
+	Paladin race:Knight level:6 a:11 def:12 hp:50 dmg-min:10 dmg-max:20 v:fast growth:2 gold:600
+	Crusader race:Knight level:6 a:11 def:12 hp:65 dmg-min:10 dmg-max:20 v:very_fast growth:2 gold:1000
+	; Necromancers
+	Skeleton race:Necromancer level:1 a:4 def:3 hp:4 dmg-min:2 dmg-max:3 v:average growth:8 gold:75
+	Zombie race:Necromancer level:2 a:5 def:2 hp:15 dmg-min:2 dmg-max:3 v:very_slow growth:6 gold:150
+	Mutant_Zombie race:Necromancer level:2 a:5 def:2 hp:20 dmg-min:2 dmg-max:3 v:average growth:6 gold:200
+	Mummy race:Necromancer level:3 a:6 def:6 hp:25 dmg-min:3 dmg-max:4 v:average growth:4 gold:250
+	Royal_Mummy race:Necromancer level:3 a:6 def:6 hp:30 dmg-min:3 dmg-max:4 v:fast growth:4 gold:300
+	Vampire race:Necromancer level:4 a:8 def:6 hp:30 dmg-min:5 dmg-max:7 v:average growth:3 gold:500
+	Vampire_Lord race:Necromancer level:4 a:8 def:6 hp:40 dmg-min:5 dmg-max:7 v:fast growth:3 gold:650
+	Lich race:Necromancer level:5 a:7 def:12 hp:25 dmg-min:8 dmg-max:10 v:fast growth:2 gold:750 ammo:12
+	Power_Lich race:Necromancer level:5 a:7 def:13 hp:35 dmg-min:8 dmg-max:10 v:very_fast growth:2 gold:900 ammo:24
+	Bone_Dragon race:Necromancer level:6 a:11 def:9 hp:150 dmg-min:25 dmg-max:45 v:average growth:1 gold:1500
+	; Sorceress
+	Sprite race:Sorceress level:1 a:4 def:2 hp:2 dmg-min:1 dmg-max:2 v:average growth:8 gold:50
+	Dwarf race:Sorceress level:2 a:6 def:5 hp:20 dmg-min:2 dmg-max:4 v:very_slow growth:6 gold:200
+	Battle_Dwarf race:Sorceress level:2 a:6 def:6 hp:20 dmg-min:2 dmg-max:4 v:average growth:6 gold:250
+	Elf race:Sorceress level:3 a:4 def:3 hp:15 dmg-min:2 dmg-max:3 v:average growth:4 gold:250 ammo:24
+	Grand_Elf race:Sorceress level:3 a:5 def:5 hp:15 dmg-min:2 dmg-max:3 v:very_fast growth:4 gold:300 ammo:24 shots:2
+	Druid race:Sorceress level:4 a:7 def:5 hp:25 dmg-min:5 dmg-max:8 v:fast growth:3 gold:350 ammo:8
+	Greater_Druid race:Sorceress level:4 a:7 def:7 hp:25 dmg-min:5 dmg-max:8 v:very_fast growth:3 gold:400 ammo:16
+	Unicorn race:Sorceress level:5 a:10 def:9 hp:40 dmg-min:7 dmg-max:14 v:fast growth:2 gold:500
+	Phoenix race:Sorceress level:6 a:12 def:10 hp:100 dmg-min:20 dmg-max:40 v:ultra_fast growth:1 gold:1500 mercury:1
+	; Warlock
+	Centaur race:Warlock level:1 a:3 def:1 hp:5 dmg-min:1 dmg-max:2 v:average growth:8 gold:60 ammo:8
+	Gargoyle race:Warlock level:2 a:4 def:7 hp:15 dmg-min:2 dmg-max:3 v:very_fast growth:6 gold:200
+	Griffin race:Warlock level:3 a:6 def:6 hp:25 dmg-min:3 dmg-max:5 v:average growth:4 gold:300
+	Minotaur race:Warlock level:4 a:9 def:8 hp:35 dmg-min:5 dmg-max:10 v:average growth:3 gold:400
+	Minotaur_King race:Warlock level:4 a:9 def:8 hp:45 dmg-min:5 dmg-max:10 v:very_fast growth:3 gold:500
+	Hydra race:Warlock level:5 a:8 def:9 hp:75 dmg-min:6 dmg-max:12 v:very_slow growth:2 gold:800
+	Green_Dragon race:Warlock level:6 a:12 def:12 hp:200 dmg-min:25 dmg-max:50 v:average growth:1 gold:3000 sulphur:1
+	Red_Dragon race:Warlock level:6 a:13 def:13 hp:250 dmg-min:25 dmg-max:50 v:fast growth:1 gold:3500 sulphur:1
+	Black_Dragon race:Warlock level:6 a:14 def:14 hp:300 dmg-min:25 dmg-max:50 v:very_fast growth:1 gold:4000 sulphur:2
+	; Wizard
+	Halfling race:Wizard level:1 a:2 def:1 hp:3 dmg-min:1 dmg-max:3 v:slow growth:8 gold:50 ammo:12
+	Boar race:Wizard level:2 a:5 def:4 hp:15 dmg-min:2 dmg-max:3 v:very_fast growth:6 gold:150
+	Iron_Golem race:Wizard level:3 a:5 def:10 hp:30 dmg-min:4 dmg-max:5 v:very_slow growth:4 gold:300
+	Steel_Golem race:Wizard level:3 a:7 def:10 hp:35 dmg-min:4 dmg-max:5 v:slow growth:4 gold:350
+	Roc race:Wizard level:4 a:7 def:7 hp:40 dmg-min:4 dmg-max:8 v:average growth:3 gold:400
+	Mage race:Wizard level:5 a:11 def:7 hp:30 dmg-min:7 dmg-max:9 v:fast growth:2 gold:600 ammo:12
+	Archmage race:Wizard level:5 a:12 def:8 hp:35 dmg-min:7 dmg-max:9 v:very_fast growth:2 gold:700 ammo:24
+	Giant race:Wizard level:6 a:13 def:10 hp:150 dmg-min:20 dmg-max:30 v:average growth:1 gold:2000 gems:1
+	Titan race:Wizard level:6 a:15 def:15 hp:300 dmg-min:20 dmg-max:30 v:very_fast growth:1 gold:5000 gems:2 ammo:16
+	; Neutrals
+	Rogue race:Neutral a:6 def:1 hp:4 dmg-min:1 dmg-max:2 v:fast gold:50
+	Nomad race:Neutral a:7 def:6 hp:20 dmg-min:2 dmg-max:5 v:very_fast gold:200
+	Ghost race:Neutral a:8 def:7 hp:20 dmg-min:4 dmg-max:6 v:fast gold:1000
+	Genie race:Neutral a:10 def:9 hp:50 dmg-min:20 dmg-max:30 v:very_fast gold:650 gems:1
+	Medusa race:Neutral a:8 def:9 hp:35 dmg-min:6 dmg-max:10 v:average gold:500
+	Air_Elemental race:Neutral a:7 def:7 hp:35 dmg-min:2 dmg-max:8 v:very_fast gold:500
+	Earth_Elemental race:Neutral a:8 def:8 hp:50 dmg-min:4 dmg-max:5 v:slow gold:500
+	Fire_Elemental race:Neutral a:8 def:6 hp:40 dmg-min:4 dmg-max:6 v:fast gold:500
+	Water_Elemental race:Neutral a:6 def:8 hp:45 dmg-min:3 dmg-max:7 v:average gold:500

@@ -4,6 +4,10 @@ include("debug.jl")
 Base.first(coll) = isempty(coll) ? coll : coll[1]
 exists(e) = !isempty(e)
 
+second(coll) = isempty(coll) || length(coll) < 2 ? coll : coll[2]
+
+truef = x -> true
+
 ###  collections
 
 is_scalar(sc) = any(x -> isa(sc, x), [Number, Symbol, String, Char])
@@ -37,6 +41,12 @@ split_with(f, coll, left = []) = begin
 end
 # a, b = split_with(x -> x < 7, [1,6,9,3,4,5])
 # println(a)
+
+flatten(coll) = if is_scalar(coll)
+                    coll
+                else
+                    vcat(map(flatten, coll)...)
+                end
 
 ### dictionaries (maps, hashes)
 # struct GeneralDict{K, V} <: Dict where {K<:Any, V<:Any}

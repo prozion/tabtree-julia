@@ -164,3 +164,5 @@ function add_hierarchy_relations(m)
         m
     end
 end
+
+is_empty_item(item) = all(k -> !(k isa String), keys(item))
